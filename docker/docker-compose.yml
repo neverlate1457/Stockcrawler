@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: twse
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: twse_db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  scraper:
+    build: ./docker
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: twse
+      DB_PASSWORD: example
+      DB_NAME: twse_db
+      TZ: Asia/Taipei
+    volumes:
+      - ./data:/app/data   # 若要把結果或 log 存到外部
+    restart: unless-stopped
+
+volumes:
+  db_data:
